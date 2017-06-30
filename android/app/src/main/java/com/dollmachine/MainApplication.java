@@ -29,7 +29,8 @@ public class MainApplication extends Application implements ReactApplication {
           new MainReactPackage(),
           new RCTToastPackage(),
           new RNDeviceInfo(),
-          new RCTSplashScreenPackage()
+          new RCTSplashScreenPackage(),
+          new MyPackage()
       );
     }
   };

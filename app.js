@@ -125,18 +125,43 @@
  * react-native-circular-progress 地址：https://github.com/bgryszko/react-native-circular-progress
  */
 
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import {
 	StyleSheet,
 	View,
-	Text
+	Text,
+	BackHandler
 } from 'react-native';
 
 import { Navigator } from 'react-native-deprecated-custom-components';
-
+import * as utils from './app/utils';
+import SplashScreen from 'react-native-smart-splash-screen';
 import MainScreen from './app/screens/main/MainScreen';
 
-export default class App extends Component{
+export default class App extends PureComponent {
+
+	componentDidMount () {
+		BackHandler.addEventListener('hardwareBackPress', () => {
+			let nav = global.nav;
+			const routers = nav ? nav.getCurrentRoutes() : null;
+			if (routers && routers.length > 1) {
+				nav.pop();
+				return true;
+			}
+			const now = new Date().getTime();
+			if (now - this._lastPressBackTime < 3000) {
+				return false;
+			}
+			this._lastPressBackTime = now;
+			utils.toast("再按一次退出");
+			return true;
+		});
+		SplashScreen.close({
+			animationType: SplashScreen.animationType.scale,
+			duration: 850,
+			delay: 500,
+		});
+	}
 
 	constructor(props) {
 		super(props);

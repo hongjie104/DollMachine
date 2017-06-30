@@ -5,15 +5,18 @@ import {
 	StyleSheet,
 	View,
 	Image,
-	Text
+	Text,
+	TouchableOpacity
 } from 'react-native';
 
 import * as utils from '../../utils';
+import PlayScreen from '../play/PlayScreen';
 
 export default class DollListItem extends PureComponent {
 	
 	constructor(props) {
 		super(props);
+
 	}
 
 	render() {
@@ -41,16 +44,61 @@ export default class DollListItem extends PureComponent {
 					{
 						// 钱
 					}
-					<View style={{flexDirection: 'row', marginTop: utils.toDips(20)}}>
-						<Image style={{width: utils.toDips(26), height: utils.toDips(26)}} source={require('../../imgs/ui205_001.png')} />
-						<Text style={{color: '#8e6d76', fontSize: utils.getFontSize(20), marginLeft: utils.toDips(4)}}>
+					<View style={{flexDirection: 'row', marginTop: utils.toDips(7), alignItems: 'flex-end'}}>
+						<Image style={{width: utils.toDips(26), height: utils.toDips(26), marginBottom: utils.toDips(3)}} source={require('../../imgs/ui205_001.png')} />
+						<Text style={{color: '#8e6d76', fontSize: utils.getFontSize(16), marginLeft: utils.toDips(4)}}>
 							{ dollData.price }
-						</Text>
-						<Text style={{color: '#b2b2b2', fontSize: utils.getFontSize(17)}}>
-							/1次
+							<Text style={{color: '#b2b2b2', fontSize: utils.getFontSize(13)}}>
+								/1次
+							</Text>
 						</Text>
 					</View>
+					{
+						// 按钮
+					}
+					{
+						dollData.status === 0 && <Image style={styles.btnImage} source={require('../../imgs/ui202_001.png')} />
+					}
+					{
+						dollData.status === 1 && (
+							<TouchableOpacity
+								activeOpacity={0.8}
+								onPress={() => {
+									global.nav.push({
+										Component: PlayScreen,
+										source: {
+											uri: 'rtmp://9993.liveplay.myqcloud.com/live/9993_0baa94a95cbb11e791eae435c87f075e',
+											controller: false, //Android only
+											timeout: 3000, //Android only
+											hardCodec: false, //Android only  //1 or 0  // 1 -> hw codec enable, 0 -> disable [recommended]
+											live: true, //Android only  //1 or 0 // 1 -> live
+										}
+									});
+								}}
+								style={{}}
+							>
+								<Image style={styles.btnImage} source={require('../../imgs/ui202_003.png')} />
+							</TouchableOpacity>
+						)
+					}
+					{
+						dollData.status === 2 && (
+							<TouchableOpacity
+								activeOpacity={0.8}
+								onPress={() => {utils.toast('其他玩家正在使用')}}
+								style={{}}
+							>
+								<Image style={styles.btnImage} source={require('../../imgs/ui202_002.png')} />
+							</TouchableOpacity>
+						)
+					}
 				</Image>
+				{
+					// 是不是新的机器
+				}
+				{
+					dollData.isNew === 1 && <Image style={{width: utils.toDips(80), height: utils.toDips(80), position: 'absolute', left: utils.toDips(-8), top: utils.toDips(-4)}} source={require('../../imgs/ui203.png')} />
+				}
 			</View>
 		);
 	}
@@ -69,12 +117,17 @@ const styles = StyleSheet.create({
 	},
 	dollImg: {
 		width: utils.toDips(340),
-		height: utils.toDips(260)
+		height: utils.toDips(260),
+		borderTopLeftRadius: utils.toDips(14), borderTopRightRadius: utils.toDips(14), borderWidth: 1
 	},
 	dollName: {
 		color: '#b35556',
-		fontSize: utils.getFontSize(24),
+		fontSize: utils.getFontSize(20),
 		fontWeight: 'bold',
 		marginTop: utils.toDips(7)
+	},
+	btnImage: {
+		width: utils.toDips(260),
+		height: utils.toDips(52)
 	}
 });

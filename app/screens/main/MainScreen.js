@@ -43,13 +43,14 @@ export default class MainScreen extends PureComponent {
 	}
 
 	componentDidMount() {
-		// this.fetchData();
+		this.fetchData();
 	}
 
 	render() {
 		const { dollType, dollDataArr, isRefreshing } = this.state;
 		return (
 			<View style={styles.container}>
+				<Image style={{width: utils.toDips(750), height: utils.toDips(1334), position: 'absolute', left: 0, top: 0}} source={require('../../imgs/bg.jpg')} />
 				{
 					// 顶部
 				}
@@ -144,7 +145,7 @@ export default class MainScreen extends PureComponent {
 								// 公告的数值
 							}
 							<Image style={{position: 'absolute', left: utils.toDips(66), top: 0, width: utils.toDips(37), height: utils.toDips(39), alignItems: 'center', justifyContent: 'center'}} source={require('../../imgs/ui207_101.png')}>
-								<Text style={{color: 'white', fontSize: utils.getFontSize(14)}}>
+								<Text style={{color: 'white', fontSize: utils.getFontSize(10)}}>
 									9
 								</Text>
 							</Image>
@@ -162,7 +163,7 @@ export default class MainScreen extends PureComponent {
 								// 配送的数值
 							}
 							<Image style={{position: 'absolute', left: utils.toDips(66), top: 0, width: utils.toDips(37), height: utils.toDips(39), alignItems: 'center', justifyContent: 'center'}} source={require('../../imgs/ui207_101.png')}>
-								<Text style={{color: 'white', fontSize: utils.getFontSize(14)}}>
+								<Text style={{color: 'white', fontSize: utils.getFontSize(10)}}>
 									5
 								</Text>
 							</Image>
@@ -223,26 +224,26 @@ export default class MainScreen extends PureComponent {
 				// 这是模拟的测试数据
 				// 正式版时以服务器发来的数据为准
 				const dollData = [
-					{ name: '特色的小包包哦', type: 'model', price: 85441 },
-					{ name: '日式灯笼', type: 'model', price: 451 },
-					{ name: '哦点击撒', type: 'model', price: 6 },
-					{ name: '的身份违法的事', type: 'toy', price: 547 },
-					{ name: '请问greg', type: 'model', price: 234 },
-					{ name: '公号和闰土股份', type: 'toy', price: 543 },
-					{ name: '个好人提供', type: 'model', price: 45643 },
-					{ name: '个k，浪费我的', type: 'model', price: 123 },
-					{ name: '漂亮few发的', type: 'toy', price: 4545 },
-					{ name: '漂亮few发的', type: 'toy', price: 4545 },
-					{ name: '特色的小包包哦', type: 'model', price: 85441 },
-					{ name: '日式灯笼', type: 'model', price: 451 },
-					{ name: '哦点击撒', type: 'model', price: 6 },
-					{ name: '的身份违法的事', type: 'toy', price: 547 },
-					{ name: '请问greg', type: 'model', price: 234 },
-					{ name: '公号和闰土股份', type: 'toy', price: 543 },
-					{ name: '个好人提供', type: 'model', price: 45643 },
-					{ name: '个k，浪费我的', type: 'model', price: 123 },
-					{ name: '漂亮few发的', type: 'toy', price: 4545 },
-					{ name: '漂亮few发的', type: 'toy', price: 4545 }
+					{ name: '特色的小包包哦', type: 'model', price: 85441, status: 1, isNew: 1 },
+					{ name: '日式灯笼', type: 'model', price: 451, status: 2, isNew: 1 },
+					{ name: '哦点击撒', type: 'model', price: 6, status: 0, isNew: 0 },
+					{ name: '的身份违法的事', type: 'toy', price: 547, status: 1, isNew: 1 },
+					{ name: '请问greg', type: 'model', price: 234, status: 1, isNew: 1 },
+					{ name: '公号和闰土股份', type: 'toy', price: 543, status: 2, isNew: 1 },
+					{ name: '个好人提供', type: 'model', price: 45643, status: 1, isNew: 0 },
+					{ name: '个k，浪费我的', type: 'model', price: 123, status: 1, isNew: 1 },
+					{ name: '漂亮few发的', type: 'toy', price: 4545, status: 0, isNew: 1 },
+					{ name: '漂亮few发的', type: 'toy', price: 4545, status: 2, isNew: 1 },
+					{ name: '特色的小包包哦', type: 'model', price: 85441, status: 1, isNew: 1 },
+					{ name: '日式灯笼', type: 'model', price: 451, status: 1, isNew: 0 },
+					{ name: '哦点击撒', type: 'model', price: 6, status: 2, isNew: 1 },
+					{ name: '的身份违法的事', type: 'toy', price: 547, status: 1, isNew: 1 },
+					{ name: '请问greg', type: 'model', price: 234, status: 2, isNew: 0 },
+					{ name: '公号和闰土股份', type: 'toy', price: 543, status: 1, isNew: 1 },
+					{ name: '个好人提供', type: 'model', price: 45643, status: 1, isNew: 1 },
+					{ name: '个k，浪费我的', type: 'model', price: 123, status: 1, isNew: 0 },
+					{ name: '漂亮few发的', type: 'toy', price: 4545, status: 0, isNew: 1 },
+					{ name: '漂亮few发的', type: 'toy', price: 4545, status: 1, isNew: 1 }
 				];
 
 				const lastResult = [];
@@ -258,7 +259,7 @@ export default class MainScreen extends PureComponent {
 					isRefreshing: false,
 					dollDataArr: this.state.dollDataArr.cloneWithRows(this._dollDataArr)
 				});
-			}, 500);
+			}, 100);
 		});
 	}
 

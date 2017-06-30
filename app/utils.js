@@ -11,6 +11,14 @@ const { height, width } = require('Dimensions').get('window');
 // ui设计图的宽度是750
 const UIPixelRatio = width / 750;
 
+// iphone6的像素密度
+const defaultPixel = 2;
+// px转换成dp
+const w2 = 750 / defaultPixel;
+const h2 = 1334 / defaultPixel;
+// 获取缩放比例
+const scale = Math.min(height / h2, width / w2);
+
 /**
  * 判断当前系统是不是iOS
  * @return {Boolean} [description]
@@ -66,7 +74,10 @@ export function getPixelRatio() {
  */
 export function getFontSize(px) {
 	// return toDips(px) * PixelRatio.get() / 3;
-	return toDips(px) + (isIOS() ? 2 : 0);
+	return toDips(px) + (isIOS() ? 2 : 4);
+	
+	// px = Math.round((px * scale + 0.5) * PixelRatio.get() / PixelRatio.getFontScale());
+	// return px / defaultPixel;
 }
 
 export function getTextMarginTop(fontSize) {

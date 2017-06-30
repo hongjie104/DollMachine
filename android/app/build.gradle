@@ -144,9 +144,13 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: "libs", include: ["*.jar"])
-    compile "com.android.support:appcompat-v7:23.0.1"
-    compile "com.facebook.react:react-native:+"  // From node_modules
+    // provided fileTree(include: ['*.jar'], dir: 'libs')
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile 'com.android.support:appcompat-v7:23.0.1'
+    compile 'com.facebook.react:react-native:+'
+    compile files('libs/pldroid-player-1.6.0.jar')
+    compile 'com.qiniu.pili:pili-android-qos:0.8.+'
+    // From node_modules
     compile project(':react-native-toast')
     compile project(':react-native-device-info')
     compile project(':react-native-smart-splashscreen')
