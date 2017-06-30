@@ -27,6 +27,12 @@ export default class PlayScreen extends PureComponent {
 	constructor(props) {
 		super(props);
 
+		this.state = {
+			isPlaying: false
+		};
+
+		this._readyToPlay = this.readyToPlay.bind(this);
+
 		this._onStart = this.onStart.bind(this);
 		this._onLoading = this.onLoading.bind(this);
 		this._onPaused = this.onPaused.bind(this);
@@ -37,6 +43,7 @@ export default class PlayScreen extends PureComponent {
 
 	render() {
 		const { source } = this.props;
+		const { isPlaying } = this.state;
 		return (
 			<View style={styles.container}>
 			{
@@ -110,10 +117,10 @@ export default class PlayScreen extends PureComponent {
 					<Image style={{width: utils.toDips(90), height: utils.toDips(90)}} source={require('../../imgs/ui301_4.png')} />
 				</TouchableOpacity>
 				{
-					false && this.rednerWait()
+					!isPlaying && this.rednerWait()
 				}
 				{
-					true && this.renderPlay()
+					isPlaying && this.renderPlay()
 				}
 			</View>
 		);
@@ -138,7 +145,7 @@ export default class PlayScreen extends PureComponent {
 				<View style={{alignItems: 'center', marginTop: utils.toDips(15)}}>
 					<TouchableOpacity
 						activeOpacity={0.8}
-						onPress={() => {}}
+						onPress={this._readyToPlay}
 						style={{}}
 					>
 						<Image style={{width: utils.toDips(322), height: utils.toDips(78)}} source={require('../../imgs/ui301_5.png')} />
@@ -197,6 +204,12 @@ export default class PlayScreen extends PureComponent {
 				</TouchableOpacity>
 			</Image>
 		);
+	}
+
+	readyToPlay() {
+		this.setState({
+			isPlaying: true
+		});
 	}
 
 	onStart(e) {
