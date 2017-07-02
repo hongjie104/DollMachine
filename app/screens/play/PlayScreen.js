@@ -11,6 +11,7 @@ import {
 
 import Player from './NewPlayer';
 import * as utils from '../../utils';
+import DirBtn from './DirBtn';
 
 export default class PlayScreen extends PureComponent {
 
@@ -39,6 +40,15 @@ export default class PlayScreen extends PureComponent {
 		this._onShutdown = this.onShutdown.bind(this);
 		this._onError = this.onError.bind(this);
 		this._onPlaying = this.onPlaying.bind(this);
+
+		this._onStartTop = this.onStartTop.bind(this);
+		this._onEndTop = this.onEndTop.bind(this);
+		this._onStartRight = this.onStartRight.bind(this);
+		this._onEndRight = this.onEndRight.bind(this);
+		this._onStartBottom = this.onStartBottom.bind(this);
+		this._onEndBottom = this.onEndBottom.bind(this);
+		this._onStartLeft = this.onStartLeft.bind(this);
+		this._onEndLeft = this.onEndLeft.bind(this);
 	}
 
 	render() {
@@ -174,34 +184,10 @@ export default class PlayScreen extends PureComponent {
 					<Image style={{width: utils.toDips(228), height: utils.toDips(98)}} source={require('../../imgs/ui303_7.png')} />
 				</TouchableOpacity>
 				<Image style={{position: 'absolute', left: utils.toDips(392), top: utils.toDips(114), width: utils.toDips(313), height: utils.toDips(313)}} source={require('../../imgs/ui303_1.png')} />
-				<TouchableOpacity
-					activeOpacity={0.8}
-					onPress={() => {}}
-					style={{position: 'absolute', left: utils.toDips(475), top: utils.toDips(87)}}
-				>
-					<Image style={{width: utils.toDips(144), height: utils.toDips(144)}} source={require('../../imgs/ui303_2.png')} />
-				</TouchableOpacity>
-				<TouchableOpacity
-					activeOpacity={0.8}
-					onPress={() => {}}
-					style={{position: 'absolute', left: utils.toDips(589), top: utils.toDips(204)}}
-				>
-					<Image style={{width: utils.toDips(144), height: utils.toDips(144)}} source={require('../../imgs/ui303_3.png')} />
-				</TouchableOpacity>
-				<TouchableOpacity
-					activeOpacity={0.8}
-					onPress={() => {}}
-					style={{position: 'absolute', left: utils.toDips(475), top: utils.toDips(319)}}
-				>
-					<Image style={{width: utils.toDips(144), height: utils.toDips(144)}} source={require('../../imgs/ui303_4.png')} />	
-				</TouchableOpacity>
-				<TouchableOpacity
-					activeOpacity={0.8}
-					onPress={() => {}}
-					style={{position: 'absolute', left: utils.toDips(355), top: utils.toDips(204)}}
-				>
-					<Image style={{width: utils.toDips(144), height: utils.toDips(144)}} source={require('../../imgs/ui303_5.png')} />
-				</TouchableOpacity>
+				<DirBtn startFunc={this._onStartTop} endFunc={this._onEndTop} left={utils.toDips(475)} top={utils.toDips(87)} source={require('../../imgs/ui303_2.png')} />
+				<DirBtn startFunc={this._onStartRight} endFunc={this._onEndRight} left={utils.toDips(589)} top={utils.toDips(204)} source={require('../../imgs/ui303_3.png')} />
+				<DirBtn startFunc={this._onStartBottom} endFunc={this._onEndBottom} left={utils.toDips(475)} top={utils.toDips(319)} source={require('../../imgs/ui303_4.png')} />
+				<DirBtn startFunc={this._onStartLeft} endFunc={this._onEndLeft} left={utils.toDips(355)} top={utils.toDips(204)} source={require('../../imgs/ui303_5.png')} />
 			</Image>
 		);
 	}
@@ -234,6 +220,38 @@ export default class PlayScreen extends PureComponent {
 
 	onPlaying(e) {
 		console.warn('onPlaying', e);
+	}
+
+	onStartTop() {
+		console.warn('onStartTop');
+	}
+
+	onEndTop() {
+		console.warn('onEndTop');
+	}
+
+	onStartRight() {
+		console.warn('onStartRight');
+	}
+
+	onEndRight() {
+		console.warn('onEndRight');
+	}
+
+	onStartBottom() {
+		console.warn('onStartBottom');
+	}
+
+	onEndBottom() {
+		console.warn('onEndBottom');
+	}
+
+	onStartLeft() {
+		console.warn('onStartLeft');
+	}
+
+	onEndLeft() {
+		console.warn('onEndLeft');
 	}
 
 }
