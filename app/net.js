@@ -31,7 +31,7 @@ function handleConnectivityChange(_isConnected) {
  * @param	{[function]} successCallback 成功的回调
  * @param	{[function]} errorCallback	 失败的回调
  */
-export function post (url, data, successCallback, errorCallback = null) {
+export function post ({ url, data }, successCallback, errorCallback = null) {
 	if (!isConnected) {
 		// utils.toast('网络链接已断开');
 		errorCallback && errorCallback('net is not Connected');

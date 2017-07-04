@@ -12,6 +12,8 @@ import {
 } from 'react-native';
 
 import * as utils from '../../utils';
+import * as net from '../../net';
+import * as api from '../../api';
 
 import MySwiper from './MySwiper';
 import DollListRow from './DollListRow';
@@ -82,7 +84,15 @@ export default class MainScreen extends PureComponent {
 					}
 					<TouchableOpacity
 						activeOpacity={0.8}
-						onPress={() => {utils.toast('设置')}}
+						onPress={() => {
+							net.post(api.login('test', '123456'), (result) => {
+								console.warn('111');
+								console.warn(utils.obj2Str(result));
+							}, (err) => {
+								console.warn('222');
+								console.warn(utils.obj2Str(err));
+							});
+						}}
 						style={{marginBottom: utils.toDips(21)}}
 					>
 						<Image style={styles.settingImg} source={require('../../imgs/ui207_105.png')} />
