@@ -5,7 +5,8 @@ const {
 	NetInfo,
 } = ReactNative;
 
-// import * as utils from './utils';
+import * as utils from './utils';
+import * as me from './me';
 
 const TIME_OUT = 12000;
 
@@ -41,7 +42,8 @@ export function post ({ url, data }, successCallback, errorCallback = null) {
 		method: 'POST',
 		headers: {
 			'Accept': 'application/json',
-			'Content-Type': 'application/json'
+			'Content-Type': 'application/json',
+			'Authorization': `Token ${me.info.token}`
 			// 'Accept': "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
 			// 'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
 		},

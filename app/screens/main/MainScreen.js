@@ -14,9 +14,12 @@ import {
 import * as utils from '../../utils';
 import * as net from '../../net';
 import * as api from '../../api';
+import * as me from '../../me';
 
 import MySwiper from './MySwiper';
 import DollListRow from './DollListRow';
+
+import RegisterScreen from '../register/RegisterScreen';
 
 /**
  * 娃娃机列表界面
@@ -32,6 +35,7 @@ export default class MainScreen extends PureComponent {
 			dollDataArr: new ListView.DataSource({rowHasChanged: (row1, row2) => row1 !== row2}),
 			isRefreshing: false
 		};
+		this._page = 1;
 		this._dollDataArr = [];
 
 		this._onAllDollSelected = this.onAllDollSelected.bind(this);
@@ -85,13 +89,7 @@ export default class MainScreen extends PureComponent {
 					<TouchableOpacity
 						activeOpacity={0.8}
 						onPress={() => {
-							net.post(api.login('test', '123456'), (result) => {
-								console.warn('111');
-								console.warn(utils.obj2Str(result));
-							}, (err) => {
-								console.warn('222');
-								console.warn(utils.obj2Str(err));
-							});
+							
 						}}
 						style={{marginBottom: utils.toDips(21)}}
 					>
@@ -147,7 +145,19 @@ export default class MainScreen extends PureComponent {
 						}
 						<TouchableOpacity
 							activeOpacity={0.8}
-							onPress={() => {utils.toast('公告')}}
+							onPress={() => {
+								net.post(api.login('test001', '123456'), (result) => {
+									if (result.code === 200) {
+										me.info = result.data;
+										me.save(result.data);
+										utils.toast(result.data);
+									} else {
+										utils.toast(result.message);
+									}
+								}, (err) => {
+									utils.toast(err);
+								});
+							}}
 							style={{marginTop: utils.toDips(21), marginLeft: utils.toDips(421)}}
 						>
 							<Image style={{width: utils.toDips(100), height: utils.toDips(100)}} source={require('../../imgs/ui207_103.png')} />
@@ -165,7 +175,11 @@ export default class MainScreen extends PureComponent {
 						}
 						<TouchableOpacity
 							activeOpacity={0.8}
-							onPress={() => {utils.toast('配送')}}
+							onPress={() => {
+								global.nav.push({
+									Component: RegisterScreen
+								});								
+							}}
 							style={{marginTop: utils.toDips(21), marginLeft: utils.toDips(1)}}
 						>
 							<Image style={{width: utils.toDips(100), height: utils.toDips(100)}} source={require('../../imgs/ui207_102.png')} />
@@ -226,50 +240,84 @@ export default class MainScreen extends PureComponent {
 	 * 这里就先模拟一下
 	 */
 	fetchData(refresh) {
+		if (this._page > 1)	return;
 		this.setState({
 			isRefreshing: true
 		}, () => {
-			const timer = setTimeout(() => {
-				clearTimeout(timer);
-				// 这是模拟的测试数据
-				// 正式版时以服务器发来的数据为准
-				const dollData = [
-					{ name: '特色的小包包哦', type: 'model', price: 85441, status: 1, isNew: 1 },
-					{ name: '日式灯笼', type: 'model', price: 451, status: 2, isNew: 1 },
-					{ name: '哦点击撒', type: 'model', price: 6, status: 0, isNew: 0 },
-					{ name: '的身份违法的事', type: 'toy', price: 547, status: 1, isNew: 1 },
-					{ name: '请问greg', type: 'model', price: 234, status: 1, isNew: 1 },
-					{ name: '公号和闰土股份', type: 'toy', price: 543, status: 2, isNew: 1 },
-					{ name: '个好人提供', type: 'model', price: 45643, status: 1, isNew: 0 },
-					{ name: '个k，浪费我的', type: 'model', price: 123, status: 1, isNew: 1 },
-					{ name: '漂亮few发的', type: 'toy', price: 4545, status: 0, isNew: 1 },
-					{ name: '漂亮few发的', type: 'toy', price: 4545, status: 2, isNew: 1 },
-					{ name: '特色的小包包哦', type: 'model', price: 85441, status: 1, isNew: 1 },
-					{ name: '日式灯笼', type: 'model', price: 451, status: 1, isNew: 0 },
-					{ name: '哦点击撒', type: 'model', price: 6, status: 2, isNew: 1 },
-					{ name: '的身份违法的事', type: 'toy', price: 547, status: 1, isNew: 1 },
-					{ name: '请问greg', type: 'model', price: 234, status: 2, isNew: 0 },
-					{ name: '公号和闰土股份', type: 'toy', price: 543, status: 1, isNew: 1 },
-					{ name: '个好人提供', type: 'model', price: 45643, status: 1, isNew: 1 },
-					{ name: '个k，浪费我的', type: 'model', price: 123, status: 1, isNew: 0 },
-					{ name: '漂亮few发的', type: 'toy', price: 4545, status: 0, isNew: 1 },
-					{ name: '漂亮few发的', type: 'toy', price: 4545, status: 1, isNew: 1 }
-				];
+			net.post(api.getDollMachine(this._page), (result) => {
+				if (result.code === 200) {
+					this._page += 1;
+					/*
+					{
+						"id": "1",
+						"machine_name": "机器二",
+						"credit": "5000",
+						"path": "http://admin.wawaji.com/uploads/picture/594e876af2fe6.gif",
+						"status": "0"
+					}
+					*/
+					result.data
+					const lastResult = [];
+					while(result.data.length > 2) {
+						lastResult.push(result.data.splice(0, 2));
+					}
+					if(result.data.length > 0) {
+						lastResult.push(result.data);
+					}
 
-				const lastResult = [];
-				while(dollData.length > 2) {
-					lastResult.push(dollData.splice(0, 2));
+					this._dollDataArr = refresh ? lastResult : this._dollDataArr.concat(lastResult);
+					this.setState({
+						isRefreshing: false,
+						dollDataArr: this.state.dollDataArr.cloneWithRows(this._dollDataArr)
+					});
+				} else {
+					utils.toast(result.message);
 				}
-				if(dollData.length > 0) {
-					lastResult.push(dollData);
-				}
+			}, (err) => {
+				utils.toast(err);
+			});
 
-				this._dollDataArr = refresh ? lastResult : this._dollDataArr.concat(lastResult);
-				this.setState({
-					isRefreshing: false,
-					dollDataArr: this.state.dollDataArr.cloneWithRows(this._dollDataArr)
-				});
-			}, 100);
+			// const timer = setTimeout(() => {
+			// 	clearTimeout(timer);
+			// 	// 这是模拟的测试数据
+			// 	// 正式版时以服务器发来的数据为准
+			// 	const dollData = [
+			// 		{ name: '特色的小包包哦', type: 'model', price: 85441, status: 1, isNew: 1 },
+			// 		{ name: '日式灯笼', type: 'model', price: 451, status: 2, isNew: 1 },
+			// 		{ name: '哦点击撒', type: 'model', price: 6, status: 0, isNew: 0 },
+			// 		{ name: '的身份违法的事', type: 'toy', price: 547, status: 1, isNew: 1 },
+			// 		{ name: '请问greg', type: 'model', price: 234, status: 1, isNew: 1 },
+			// 		{ name: '公号和闰土股份', type: 'toy', price: 543, status: 2, isNew: 1 },
+			// 		{ name: '个好人提供', type: 'model', price: 45643, status: 1, isNew: 0 },
+			// 		{ name: '个k，浪费我的', type: 'model', price: 123, status: 1, isNew: 1 },
+			// 		{ name: '漂亮few发的', type: 'toy', price: 4545, status: 0, isNew: 1 },
+			// 		{ name: '漂亮few发的', type: 'toy', price: 4545, status: 2, isNew: 1 },
+			// 		{ name: '特色的小包包哦', type: 'model', price: 85441, status: 1, isNew: 1 },
+			// 		{ name: '日式灯笼', type: 'model', price: 451, status: 1, isNew: 0 },
+			// 		{ name: '哦点击撒', type: 'model', price: 6, status: 2, isNew: 1 },
+			// 		{ name: '的身份违法的事', type: 'toy', price: 547, status: 1, isNew: 1 },
+			// 		{ name: '请问greg', type: 'model', price: 234, status: 2, isNew: 0 },
+			// 		{ name: '公号和闰土股份', type: 'toy', price: 543, status: 1, isNew: 1 },
+			// 		{ name: '个好人提供', type: 'model', price: 45643, status: 1, isNew: 1 },
+			// 		{ name: '个k，浪费我的', type: 'model', price: 123, status: 1, isNew: 0 },
+			// 		{ name: '漂亮few发的', type: 'toy', price: 4545, status: 0, isNew: 1 },
+			// 		{ name: '漂亮few发的', type: 'toy', price: 4545, status: 1, isNew: 1 }
+			// 	];
+
+			// 	const lastResult = [];
+			// 	while(dollData.length > 2) {
+			// 		lastResult.push(dollData.splice(0, 2));
+			// 	}
+			// 	if(dollData.length > 0) {
+			// 		lastResult.push(dollData);
+			// 	}
+
+			// 	this._dollDataArr = refresh ? lastResult : this._dollDataArr.concat(lastResult);
+			// 	this.setState({
+			// 		isRefreshing: false,
+			// 		dollDataArr: this.state.dollDataArr.cloneWithRows(this._dollDataArr)
+			// 	});
+			// }, 100);
 		});
 	}
 

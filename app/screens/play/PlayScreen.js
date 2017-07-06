@@ -11,6 +11,8 @@ import {
 
 import Player from './NewPlayer';
 import * as utils from '../../utils';
+import * as net from '../../net';
+import * as api from '../../api';
 import DirBtn from './DirBtn';
 
 export default class PlayScreen extends PureComponent {
@@ -22,7 +24,16 @@ export default class PlayScreen extends PureComponent {
 			timeout: PropTypes.number, //Android only
 			hardCodec: PropTypes.bool, //Android only  //1 or 0  // 1 -> hw codec enable, 0 -> disable [recommended]
 			live: PropTypes.bool, //Android only  //1 or 0 // 1 -> live
-		}).isRequired
+		}).isRequired,
+		id: PropTypes.string.isRequired,
+		machine_name: PropTypes.string.isRequired,
+		credit: PropTypes.string.isRequired,
+		thumbs: PropTypes.array.isRequired,
+		machine_id: PropTypes.string.isRequired,
+		// liveurl_1: "http://www.baidu.com/",
+		// liveurl_2: "http://www.163.com/",
+		socket_ip: PropTypes.string.isRequired,
+		socket_port: PropTypes.string.isRequired
 	};
 	
 	constructor(props) {
@@ -52,6 +63,7 @@ export default class PlayScreen extends PureComponent {
 	}
 
 	render() {
+		console.warn(`${this.props.socket_ip}:${this.props.socket_port}`);		
 		const { source } = this.props;
 		const { isPlaying } = this.state;
 		return (
@@ -137,6 +149,7 @@ export default class PlayScreen extends PureComponent {
 	}
 
 	rednerWait() {
+		const { thumbs, credit } = this.props;
 		return(
 			<Image style={{width: utils.screenWidth(), height: utils.toDips(620)}} source={require('../../imgs/ui101_3.png')}>
 				{
@@ -146,7 +159,7 @@ export default class PlayScreen extends PureComponent {
 					<Image style={{width: utils.toDips(156), height: utils.toDips(28)}} source={require('../../imgs/ui301_6.png')} />
 					<Image style={{width: utils.toDips(26), height: utils.toDips(26), marginLeft: utils.toDips(30)}} source={require('../../imgs/ui205_001.png')} />
 					<Text style={{color: '#8e6d76', fontSize: utils.getFontSize(16), marginLeft: utils.toDips(4)}}>
-						9642145
+						{ credit }
 					</Text>
 				</View>
 				{
@@ -165,8 +178,12 @@ export default class PlayScreen extends PureComponent {
 					// 娃娃的展示图片
 				}
 				<Image style={{width: utils.screenWidth(), height: utils.toDips(450), marginTop: utils.toDips(20), flexDirection: 'row', justifyContent: 'center', paddingTop: utils.toDips(45)}} source={require('../../imgs/ui301_7.png')}>
-					<Image style={{width: utils.toDips(334), height: utils.toDips(382)}} source={require('../../imgs/ui302_001.png')} />
-					<Image style={{width: utils.toDips(334), height: utils.toDips(382), marginLeft: utils.toDips(15)}} source={require('../../imgs/ui302_001.png')} />
+					{
+						// <Image style={{width: utils.toDips(334), height: utils.toDips(382)}} source={require('../../imgs/ui302_001.png')} />
+						// <Image style={{width: utils.toDips(334), height: utils.toDips(382), marginLeft: utils.toDips(15)}} source={require('../../imgs/ui302_001.png')} />
+					}
+					<Image style={{width: utils.toDips(334), height: utils.toDips(382)}} source={{uri: thumbs[0]}} />
+					<Image style={{width: utils.toDips(334), height: utils.toDips(382), marginLeft: utils.toDips(15)}} source={{uri: thumbs[1]}} />
 				</Image>
 			</Image>
 		);
@@ -193,9 +210,19 @@ export default class PlayScreen extends PureComponent {
 	}
 
 	readyToPlay() {
-		this.setState({
-			isPlaying: true
+		const { id, socket_ip, socket_port } = this.props;
+		net.post(api.tryToPlay(id), (result) => {
+			if (result.code === 200) {
+				
+			} else {
+				utils.toast(result.message);
+			}
+		}, err => {
+			utils.toast(err);
 		});
+		// this.setState({
+		// 	isPlaying: true
+		// });
 	}
 
 	onStart(e) {

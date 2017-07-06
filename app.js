@@ -134,6 +134,7 @@ import {
 } from 'react-native';
 
 import { Navigator } from 'react-native-deprecated-custom-components';
+import * as me from './app/me';
 import * as utils from './app/utils';
 import SplashScreen from 'react-native-smart-splash-screen';
 import MainScreen from './app/screens/main/MainScreen';
@@ -161,13 +162,29 @@ export default class App extends PureComponent {
 			duration: 850,
 			delay: 500,
 		});
+
+		// 读取用户信息
+		me.load((info) => {
+			me.info = info;
+			this.setState({
+				isIniting: false
+			});
+		});
 	}
 
 	constructor(props) {
 		super(props);
+
+		this.state = {
+			isIniting: true
+		};
 	}
 
 	render() {
+		const { isIniting } = this.state;
+		if (isIniting) {
+			return <View style={styles.container} />;
+		}
 		// route.SceneConfig的可选值有
 		// Navigator.SceneConfigs.PushFromRight (默认)
 		// Navigator.SceneConfigs.FloatFromRight
