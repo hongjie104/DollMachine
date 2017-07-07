@@ -169,6 +169,10 @@ export default class App extends PureComponent {
 			this.setState({
 				isIniting: false
 			});
+		}, () => {
+			this.setState({
+				isIniting: false
+			});
 		});
 	}
 

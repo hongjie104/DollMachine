@@ -51,6 +51,8 @@ export function loadDataFromLocal(key, onSuccess, onFail) {
 	}).catch(err => {
 		//如果没有找到数据且没有同步方法，
 		//或者有其他异常，则在catch中返回
+		console.log('aaaaaaaaaaaaaaaaa');
+		console.log(onFail);
 		onFail && onFail(err);
 	});
 }

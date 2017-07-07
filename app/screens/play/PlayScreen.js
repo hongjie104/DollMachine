@@ -13,6 +13,9 @@ import Player from './NewPlayer';
 import * as utils from '../../utils';
 import * as net from '../../net';
 import * as api from '../../api';
+import * as me from '../../me';
+import Socket from '../../Socket';
+// import * as storeSingleton from '../../storeSingleton';
 import DirBtn from './DirBtn';
 
 export default class PlayScreen extends PureComponent {
@@ -62,8 +65,29 @@ export default class PlayScreen extends PureComponent {
 		this._onEndLeft = this.onEndLeft.bind(this);
 	}
 
+	componentDidMount() {
+		const { socket_ip, socket_port, machine_id } = this.props;
+		// this._socket = storeSingleton.getSocket(`ws://${socket_ip}`, socket_port, () => {
+		// // this._socket = storeSingleton.getSocket(`ws://${socket_ip}`, socket_port, () => {
+		// 	// 链接成功
+		// 	this._isSocketConnected = true;
+		// });
+		this._socket = new Socket(`ws://${socket_ip}`, socket_port, () => {
+			// 链接成功
+			this._isSocketConnected = true;
+			this._socket.send({
+				type: 'login',
+				machine_id,
+				uid: me.info.uid
+			});
+		});
+	}
+
+	componentWillUnmount() {
+		this._socket.close();
+	}
+
 	render() {
-		console.warn(`${this.props.socket_ip}:${this.props.socket_port}`);		
 		const { source } = this.props;
 		const { isPlaying } = this.state;
 		return (
@@ -210,16 +234,19 @@ export default class PlayScreen extends PureComponent {
 	}
 
 	readyToPlay() {
-		const { id, socket_ip, socket_port } = this.props;
-		net.post(api.tryToPlay(id), (result) => {
-			if (result.code === 200) {
+		// const { id, socket_ip, socket_port } = this.props;
+		// net.post(api.tryToPlay(id), (result) => {
+		// 	if (result.code === 200) {				
 				
-			} else {
-				utils.toast(result.message);
-			}
-		}, err => {
-			utils.toast(err);
-		});
+		// 	} else {
+		// 		utils.toast(result.message);
+		// 	}
+		// }, err => {
+		// 	utils.toast(err);
+		// });
+		
+		utils.toast(this._isSocketConnected ? 'Y' : 'N');
+
 		// this.setState({
 		// 	isPlaying: true
 		// });

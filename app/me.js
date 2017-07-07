@@ -24,10 +24,9 @@ export let info = {
 };
 
 export function save(data) {
-	console.log(data.token + '111aaa');
 	storage.saveDataToLocal('myInfo', data, () => {});
 }
 
-export function load(cb) {
-	storage.loadDataFromLocal('myInfo', cb);
+export function load(cb, errCB) {
+	storage.loadDataFromLocal('myInfo', cb, errCB);
 }
