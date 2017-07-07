@@ -46,6 +46,9 @@ export default class PlayScreen extends PureComponent {
 			isPlaying: false
 		};
 
+		this._isSocketConnected = false;
+		this._isMachineBusy = false;
+
 		this._readyToPlay = this.readyToPlay.bind(this);
 
 		this._onStart = this.onStart.bind(this);
@@ -72,14 +75,42 @@ export default class PlayScreen extends PureComponent {
 		// 	// 链接成功
 		// 	this._isSocketConnected = true;
 		// });
-		this._socket = new Socket(`ws://${socket_ip}`, socket_port, () => {
-			// 链接成功
-			this._isSocketConnected = true;
-			this._socket.send({
-				type: 'login',
-				machine_id,
-				uid: me.info.uid
-			});
+		this._socket = new Socket(`ws://${socket_ip}`, socket_port, {
+			onConnect: () => {
+				// 链接成功
+				this._isSocketConnected = true;
+				this._socket.send({
+					type: 'login',
+					machine_id,
+					uid: me.info.uid
+				});
+			},
+			onLogin: (data) => {
+				// {"type":"login","status":"1","online":"1"}
+				if (data === 'login') {
+					// status=1 表示机器处理空闲中，可以进行抢
+					// status=0 机器处理正忙，把抢的按钮灰掉，不允许用户点击；
+					// online 有多少用户正在观看
+					this._isMachineBusy = data.status === 0;
+				}
+			},
+			onPlay: (data) => {
+				// {"type":"play","status":0}
+				this._isMachineBusy = data.status === 0;
+				this.setState({
+					isPlaying: true
+				});
+			},
+			onOver: () => {
+				// 我的游戏结束了
+				this.setState({
+					isPlaying: false
+				});
+			},
+			onStart: () => {
+				// 可以抢机器了
+				this._isMachineBusy = false;
+			}
 		});
 	}
 
@@ -219,7 +250,9 @@ export default class PlayScreen extends PureComponent {
 				<Image style={{position: 'absolute', left: utils.toDips(69), top: utils.toDips(112), width: utils.toDips(114), height: utils.toDips(32)}} source={require('../../imgs/ui303_6.png')} />
 				<TouchableOpacity
 					activeOpacity={0.8}
-					onPress={() => {}}
+					onPress={() => {
+
+					}}
 					style={{position: 'absolute', left: utils.toDips(59), top: utils.toDips(166), }}
 				>
 					<Image style={{width: utils.toDips(228), height: utils.toDips(98)}} source={require('../../imgs/ui303_7.png')} />
@@ -234,22 +267,27 @@ export default class PlayScreen extends PureComponent {
 	}
 
 	readyToPlay() {
-		// const { id, socket_ip, socket_port } = this.props;
-		// net.post(api.tryToPlay(id), (result) => {
-		// 	if (result.code === 200) {				
-				
-		// 	} else {
-		// 		utils.toast(result.message);
-		// 	}
-		// }, err => {
-		// 	utils.toast(err);
-		// });
-		
-		utils.toast(this._isSocketConnected ? 'Y' : 'N');
-
-		// this.setState({
-		// 	isPlaying: true
-		// });
+		if (this._isSocketConnected) {
+			if (!this._isMachineBusy) {
+				const { id, machine_id } = this.props;
+				net.post(api.tryToPlay(id), (result) => {
+					if (result.code === 200) {
+						this._socket.send({
+							type: 'play',
+							machine_id
+						});
+					} else {
+						utils.toast(result.message);
+					}
+				}, err => {
+					utils.toast(err);
+				});
+			} else {
+				utils.toast('其他用户正在使用这台机器，请稍候！');
+			}
+		} else {
+			utils.toast('网络状况不佳，请稍候!');
+		}
 	}
 
 	onStart(e) {
