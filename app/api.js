@@ -1,9 +1,10 @@
 'use strict';
 
 import * as utils from './utils';
-import { PHP_HOST, PHP_PORT, VERSION } from './config';
+import { PHP_HOST, PHP_PORT, MACHIN_HOST, MACHIN_POST, VERSION } from './config';
 
 const phpUrl = `${PHP_HOST}:${PHP_PORT}`;
+const machineUrl = `${MACHIN_HOST}:${MACHIN_POST}/rest/v1b/wa`;
 
 function createParam(params) {
 	return {
@@ -47,4 +48,32 @@ export function tryToPlay(id) {
 		url: `${phpUrl}/machine`,
 		data: createParam({id, action: "play"})
 	};
+}
+
+/**
+ * 开始动作 
+ */
+export function startMove(id, dir) {
+	return `${machineUrl}/cmd=${dir}&sessionId=${id}`;
+}
+
+/**
+ * 停止动作
+ */
+export function stopMove(id, dir) {
+	return `${machineUrl}/cmd=pause&pvsCmd=${dir}&sessionId=${id}`;
+}
+
+/**
+ * 抓娃娃
+ */
+export function fetchDoll(id) {
+	return `${machineUrl}/cmd=fetch&sessionId=${id}`;
+}
+
+/**
+ * 给机器投币
+ */
+export function money(id) {
+	return `${machineUrl}/cmd=money&sessionId=${id}`;
 }

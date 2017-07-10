@@ -58,12 +58,12 @@ export default class PlayScreen extends PureComponent {
 		this._onError = this.onError.bind(this);
 		this._onPlaying = this.onPlaying.bind(this);
 
-		this._onStartTop = this.onStartTop.bind(this);
-		this._onEndTop = this.onEndTop.bind(this);
+		this._onStartUp = this.onStartUp.bind(this);
+		this._onEndUp = this.onEndUp.bind(this);
 		this._onStartRight = this.onStartRight.bind(this);
 		this._onEndRight = this.onEndRight.bind(this);
-		this._onStartBottom = this.onStartBottom.bind(this);
-		this._onEndBottom = this.onEndBottom.bind(this);
+		this._onStartDown = this.onStartDown.bind(this);
+		this._onEndDown = this.onEndDown.bind(this);
 		this._onStartLeft = this.onStartLeft.bind(this);
 		this._onEndLeft = this.onEndLeft.bind(this);
 	}
@@ -258,9 +258,9 @@ export default class PlayScreen extends PureComponent {
 					<Image style={{width: utils.toDips(228), height: utils.toDips(98)}} source={require('../../imgs/ui303_7.png')} />
 				</TouchableOpacity>
 				<Image style={{position: 'absolute', left: utils.toDips(392), top: utils.toDips(114), width: utils.toDips(313), height: utils.toDips(313)}} source={require('../../imgs/ui303_1.png')} />
-				<DirBtn startFunc={this._onStartTop} endFunc={this._onEndTop} left={utils.toDips(475)} top={utils.toDips(87)} source={require('../../imgs/ui303_2.png')} />
+				<DirBtn startFunc={this._onStartUp} endFunc={this._onEndUp} left={utils.toDips(475)} top={utils.toDips(87)} source={require('../../imgs/ui303_2.png')} />
 				<DirBtn startFunc={this._onStartRight} endFunc={this._onEndRight} left={utils.toDips(589)} top={utils.toDips(204)} source={require('../../imgs/ui303_3.png')} />
-				<DirBtn startFunc={this._onStartBottom} endFunc={this._onEndBottom} left={utils.toDips(475)} top={utils.toDips(319)} source={require('../../imgs/ui303_4.png')} />
+				<DirBtn startFunc={this._onStartDown} endFunc={this._onEndDown} left={utils.toDips(475)} top={utils.toDips(319)} source={require('../../imgs/ui303_4.png')} />
 				<DirBtn startFunc={this._onStartLeft} endFunc={this._onEndLeft} left={utils.toDips(355)} top={utils.toDips(204)} source={require('../../imgs/ui303_5.png')} />
 			</Image>
 		);
@@ -314,36 +314,55 @@ export default class PlayScreen extends PureComponent {
 		console.warn('onPlaying', e);
 	}
 
-	onStartTop() {
-		console.warn('onStartTop');
+	onStartUp() {
+		this.startMove('up');
 	}
 
-	onEndTop() {
-		console.warn('onEndTop');
+	onEndUp() {
+		this.pauseMove();
 	}
 
 	onStartRight() {
-		console.warn('onStartRight');
+		this.startMove('right');
 	}
 
 	onEndRight() {
-		console.warn('onEndRight');
+		this.pauseMove();
 	}
 
-	onStartBottom() {
-		console.warn('onStartBottom');
+	onStartDown() {
+		this.startMove('down');
 	}
 
-	onEndBottom() {
-		console.warn('onEndBottom');
+	onEndDown() {
+		this.pauseMove();
 	}
 
 	onStartLeft() {
-		console.warn('onStartLeft');
+		this.startMove('left');
 	}
 
 	onEndLeft() {
-		console.warn('onEndLeft');
+		this.pauseMove();
+	}
+
+	startMove(dir) {
+		const { machine_id } = this.props;
+		net.get(api.startMove(id, dir), (result) => {
+			this._dir = dir;
+			utils.toast(result);
+		}, err => {
+			utils.toast(err);
+		});
+	}
+
+	pauseMove() {
+		const { machine_id } = this.props;
+		net.get(api.stopMove(id, this._dir), (result) => {
+			utils.toast(result);
+		}, err => {
+			utils.toast(err);
+		});
 	}
 
 }
