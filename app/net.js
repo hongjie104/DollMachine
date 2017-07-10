@@ -68,7 +68,13 @@ export function get (url, successCallback, errorCallback = null) {
 		errorCallback && errorCallback('net is not Connected');
 		return;
 	}
-	timeout(fetch(url), TIME_OUT)
+	timeout(fetch(url, {
+		headers: {
+			'Accept': 'application/x-www-form-urlencoded',
+			'Content-Type': 'application/json',
+			'Authorization': 'Basic QWxhZGRpbjpPcGVuU2VzYW1l'
+		},
+	}), TIME_OUT)
 		.then((response) => response.text())
 		.then((responseText) => {
 			// successCallback(JSON.parse(responseText));

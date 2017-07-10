@@ -240,6 +240,9 @@ export default class MainScreen extends PureComponent {
 	 * 这里就先模拟一下
 	 */
 	fetchData(refresh) {
+		if (refresh) {
+			this._page = 1;
+		}
 		if (this._page > 1)	return;
 		this.setState({
 			isRefreshing: true

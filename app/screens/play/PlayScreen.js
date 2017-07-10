@@ -13,6 +13,9 @@ import Player from './NewPlayer';
 import * as utils from '../../utils';
 import * as net from '../../net';
 import * as api from '../../api';
+import * as me from '../../me';
+import Socket from '../../Socket';
+// import * as storeSingleton from '../../storeSingleton';
 import DirBtn from './DirBtn';
 
 export default class PlayScreen extends PureComponent {
@@ -43,6 +46,9 @@ export default class PlayScreen extends PureComponent {
 			isPlaying: false
 		};
 
+		this._isSocketConnected = false;
+		this._isMachineBusy = false;
+
 		this._readyToPlay = this.readyToPlay.bind(this);
 
 		this._onStart = this.onStart.bind(this);
@@ -52,18 +58,67 @@ export default class PlayScreen extends PureComponent {
 		this._onError = this.onError.bind(this);
 		this._onPlaying = this.onPlaying.bind(this);
 
-		this._onStartTop = this.onStartTop.bind(this);
-		this._onEndTop = this.onEndTop.bind(this);
+		this._onStartUp = this.onStartUp.bind(this);
+		this._onEndUp = this.onEndUp.bind(this);
 		this._onStartRight = this.onStartRight.bind(this);
 		this._onEndRight = this.onEndRight.bind(this);
-		this._onStartBottom = this.onStartBottom.bind(this);
-		this._onEndBottom = this.onEndBottom.bind(this);
+		this._onStartDown = this.onStartDown.bind(this);
+		this._onEndDown = this.onEndDown.bind(this);
 		this._onStartLeft = this.onStartLeft.bind(this);
 		this._onEndLeft = this.onEndLeft.bind(this);
 	}
 
+	componentDidMount() {
+		const { socket_ip, socket_port, machine_id } = this.props;
+		// this._socket = storeSingleton.getSocket(`ws://${socket_ip}`, socket_port, () => {
+		// // this._socket = storeSingleton.getSocket(`ws://${socket_ip}`, socket_port, () => {
+		// 	// 链接成功
+		// 	this._isSocketConnected = true;
+		// });
+		this._socket = new Socket(`ws://${socket_ip}`, socket_port, {
+			onConnect: () => {
+				// 链接成功
+				this._isSocketConnected = true;
+				this._socket.send({
+					type: 'login',
+					machine_id,
+					uid: me.info.uid
+				});
+			},
+			onLogin: (data) => {
+				// {"type":"login","status":"1","online":"1"}
+				if (data === 'login') {
+					// status=1 表示机器处理空闲中，可以进行抢
+					// status=0 机器处理正忙，把抢的按钮灰掉，不允许用户点击；
+					// online 有多少用户正在观看
+					this._isMachineBusy = data.status === 0;
+				}
+			},
+			onPlay: (data) => {
+				// {"type":"play","status":0}
+				this._isMachineBusy = data.status === 0;
+				this.setState({
+					isPlaying: true
+				});
+			},
+			onOver: () => {
+				// 我的游戏结束了
+				this.setState({
+					isPlaying: false
+				});
+			},
+			onStart: () => {
+				// 可以抢机器了
+				this._isMachineBusy = false;
+			}
+		});
+	}
+
+	componentWillUnmount() {
+		this._socket.close();
+	}
+
 	render() {
-		console.warn(`${this.props.socket_ip}:${this.props.socket_port}`);		
 		const { source } = this.props;
 		const { isPlaying } = this.state;
 		return (
@@ -195,34 +250,44 @@ export default class PlayScreen extends PureComponent {
 				<Image style={{position: 'absolute', left: utils.toDips(69), top: utils.toDips(112), width: utils.toDips(114), height: utils.toDips(32)}} source={require('../../imgs/ui303_6.png')} />
 				<TouchableOpacity
 					activeOpacity={0.8}
-					onPress={() => {}}
+					onPress={() => {
+
+					}}
 					style={{position: 'absolute', left: utils.toDips(59), top: utils.toDips(166), }}
 				>
 					<Image style={{width: utils.toDips(228), height: utils.toDips(98)}} source={require('../../imgs/ui303_7.png')} />
 				</TouchableOpacity>
 				<Image style={{position: 'absolute', left: utils.toDips(392), top: utils.toDips(114), width: utils.toDips(313), height: utils.toDips(313)}} source={require('../../imgs/ui303_1.png')} />
-				<DirBtn startFunc={this._onStartTop} endFunc={this._onEndTop} left={utils.toDips(475)} top={utils.toDips(87)} source={require('../../imgs/ui303_2.png')} />
+				<DirBtn startFunc={this._onStartUp} endFunc={this._onEndUp} left={utils.toDips(475)} top={utils.toDips(87)} source={require('../../imgs/ui303_2.png')} />
 				<DirBtn startFunc={this._onStartRight} endFunc={this._onEndRight} left={utils.toDips(589)} top={utils.toDips(204)} source={require('../../imgs/ui303_3.png')} />
-				<DirBtn startFunc={this._onStartBottom} endFunc={this._onEndBottom} left={utils.toDips(475)} top={utils.toDips(319)} source={require('../../imgs/ui303_4.png')} />
+				<DirBtn startFunc={this._onStartDown} endFunc={this._onEndDown} left={utils.toDips(475)} top={utils.toDips(319)} source={require('../../imgs/ui303_4.png')} />
 				<DirBtn startFunc={this._onStartLeft} endFunc={this._onEndLeft} left={utils.toDips(355)} top={utils.toDips(204)} source={require('../../imgs/ui303_5.png')} />
 			</Image>
 		);
 	}
 
 	readyToPlay() {
-		const { id, socket_ip, socket_port } = this.props;
-		net.post(api.tryToPlay(id), (result) => {
-			if (result.code === 200) {
-				
+		if (this._isSocketConnected) {
+			if (!this._isMachineBusy) {
+				const { id, machine_id } = this.props;
+				net.post(api.tryToPlay(id), (result) => {
+					if (result.code === 200) {
+						this._socket.send({
+							type: 'play',
+							machine_id
+						});
+					} else {
+						utils.toast(result.message);
+					}
+				}, err => {
+					utils.toast(err);
+				});
 			} else {
-				utils.toast(result.message);
+				utils.toast('其他用户正在使用这台机器，请稍候！');
 			}
-		}, err => {
-			utils.toast(err);
-		});
-		// this.setState({
-		// 	isPlaying: true
-		// });
+		} else {
+			utils.toast('网络状况不佳，请稍候!');
+		}
 	}
 
 	onStart(e) {
@@ -249,36 +314,55 @@ export default class PlayScreen extends PureComponent {
 		console.warn('onPlaying', e);
 	}
 
-	onStartTop() {
-		console.warn('onStartTop');
+	onStartUp() {
+		this.startMove('up');
 	}
 
-	onEndTop() {
-		console.warn('onEndTop');
+	onEndUp() {
+		this.pauseMove();
 	}
 
 	onStartRight() {
-		console.warn('onStartRight');
+		this.startMove('right');
 	}
 
 	onEndRight() {
-		console.warn('onEndRight');
+		this.pauseMove();
 	}
 
-	onStartBottom() {
-		console.warn('onStartBottom');
+	onStartDown() {
+		this.startMove('down');
 	}
 
-	onEndBottom() {
-		console.warn('onEndBottom');
+	onEndDown() {
+		this.pauseMove();
 	}
 
 	onStartLeft() {
-		console.warn('onStartLeft');
+		this.startMove('left');
 	}
 
 	onEndLeft() {
-		console.warn('onEndLeft');
+		this.pauseMove();
+	}
+
+	startMove(dir) {
+		const { machine_id } = this.props;
+		net.get(api.startMove(id, dir), (result) => {
+			this._dir = dir;
+			utils.toast(result);
+		}, err => {
+			utils.toast(err);
+		});
+	}
+
+	pauseMove() {
+		const { machine_id } = this.props;
+		net.get(api.stopMove(id, this._dir), (result) => {
+			utils.toast(result);
+		}, err => {
+			utils.toast(err);
+		});
 	}
 
 }
