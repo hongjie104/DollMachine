@@ -21,20 +21,20 @@ import DirBtn from './DirBtn';
 export default class PlayScreen extends PureComponent {
 
 	static propTypes = {
-		source: PropTypes.shape({
-			uri: PropTypes.string.isRequired,
-			controller: PropTypes.bool, //Android only
-			timeout: PropTypes.number, //Android only
-			hardCodec: PropTypes.bool, //Android only  //1 or 0  // 1 -> hw codec enable, 0 -> disable [recommended]
-			live: PropTypes.bool, //Android only  //1 or 0 // 1 -> live
-		}).isRequired,
+		// source: PropTypes.shape({
+		// 	uri: PropTypes.string.isRequired,
+		// 	controller: PropTypes.bool, //Android only
+		// 	timeout: PropTypes.number, //Android only
+		// 	hardCodec: PropTypes.bool, //Android only  //1 or 0  // 1 -> hw codec enable, 0 -> disable [recommended]
+		// 	live: PropTypes.bool, //Android only  //1 or 0 // 1 -> live
+		// }).isRequired,
 		id: PropTypes.string.isRequired,
 		machine_name: PropTypes.string.isRequired,
 		credit: PropTypes.string.isRequired,
 		thumbs: PropTypes.array.isRequired,
 		machine_id: PropTypes.string.isRequired,
-		// liveurl_1: "http://www.baidu.com/",
-		// liveurl_2: "http://www.163.com/",
+		liveurl_1: PropTypes.string.isRequired,
+		liveurl_2: PropTypes.string.isRequired,
 		socket_ip: PropTypes.string.isRequired,
 		socket_port: PropTypes.string.isRequired
 	};
@@ -43,7 +43,8 @@ export default class PlayScreen extends PureComponent {
 		super(props);
 
 		this.state = {
-			isPlaying: false
+			isPlaying: false,
+			curLiveUrl: props.liveurl_1
 		};
 
 		this._isSocketConnected = false;
@@ -66,10 +67,12 @@ export default class PlayScreen extends PureComponent {
 		this._onEndDown = this.onEndDown.bind(this);
 		this._onStartLeft = this.onStartLeft.bind(this);
 		this._onEndLeft = this.onEndLeft.bind(this);
+
+		this._switchLiveUrl = this.switchLiveUrl.bind(this);
 	}
 
 	componentDidMount() {
-		const { socket_ip, socket_port, machine_id } = this.props;
+		const { socket_ip, socket_port, machine_id, id } = this.props;
 		// this._socket = storeSingleton.getSocket(`ws://${socket_ip}`, socket_port, () => {
 		// // this._socket = storeSingleton.getSocket(`ws://${socket_ip}`, socket_port, () => {
 		// 	// 链接成功
@@ -81,7 +84,7 @@ export default class PlayScreen extends PureComponent {
 				this._isSocketConnected = true;
 				this._socket.send({
 					type: 'login',
-					machine_id,
+					machine_id: id,
 					uid: me.info.uid
 				});
 			},
@@ -119,8 +122,7 @@ export default class PlayScreen extends PureComponent {
 	}
 
 	render() {
-		const { source } = this.props;
-		const { isPlaying } = this.state;
+		const { isPlaying, curLiveUrl } = this.state;
 		return (
 			<View style={styles.container}>
 			{
@@ -164,22 +166,28 @@ export default class PlayScreen extends PureComponent {
 					</TouchableOpacity>
 				</Image>
 				{
-				// 	<Player
-				// 	source={source}
-				// 	started={false}
-				// 	onStart={this._onStart}
-				// 	onLoading={this._onLoading}
-				// 	onPaused={this._onPaused}
-				// 	onShutdown={this._onShutdown}
-				// 	onPlayyError={this._onError}
-				// 	onPlaying={this._onPlaying}
-				// 	style={{
-				// 		width: utils.screenWidth(),
-				// 		// height: utils.screenHeight()
-				// 		// width: 200,
-				// 		height: 400
-				// 	}}
-				// />
+					<Player
+						source={{
+							uri: curLiveUrl,
+							controller: false,
+							timeout: 3000,
+							hardCodec: false,
+							live: true
+						}}
+						started={true}
+						onStart={this._onStart}
+						onLoading={this._onLoading}
+						onPaused={this._onPaused}
+						onShutdown={this._onShutdown}
+						onPlayyError={this._onError}
+						onPlaying={this._onPlaying}
+						style={{
+							width: utils.screenWidth(),
+							// height: utils.screenHeight()
+							// width: 200,
+							height: utils.toDips(625)
+						}}
+					/>
 				}
 				<View style={{flex: 1}}>
 				</View>
@@ -188,7 +196,7 @@ export default class PlayScreen extends PureComponent {
 				}
 				<TouchableOpacity
 					activeOpacity={0.8}
-					onPress={() => {}}
+					onPress={this._switchLiveUrl}
 					style={{position: 'absolute', left: utils.toDips(8), bottom: utils.toDips(620)}}
 				>
 					<Image style={{width: utils.toDips(90), height: utils.toDips(90)}} source={require('../../imgs/ui301_4.png')} />
@@ -274,13 +282,13 @@ export default class PlayScreen extends PureComponent {
 					if (result.code === 200) {
 						this._socket.send({
 							type: 'play',
-							machine_id
+							machine_id: id
 						});
 					} else {
 						utils.toast(result.message);
 					}
 				}, err => {
-					utils.toast(err);
+					utils.toast(`error => ${err}`);
 				});
 			} else {
 				utils.toast('其他用户正在使用这台机器，请稍候！');
@@ -299,7 +307,7 @@ export default class PlayScreen extends PureComponent {
 	}
 
 	onPaused(e) {
-		// console.warn('onPaused', e);
+		console.warn('onPaused', e);
 	}
 
 	onShutdown(e) {
@@ -348,7 +356,7 @@ export default class PlayScreen extends PureComponent {
 
 	startMove(dir) {
 		const { machine_id } = this.props;
-		net.get(api.startMove(id, dir), (result) => {
+		net.get(api.startMove(machine_id, dir), (result) => {
 			this._dir = dir;
 			utils.toast(result);
 		}, err => {
@@ -358,10 +366,17 @@ export default class PlayScreen extends PureComponent {
 
 	pauseMove() {
 		const { machine_id } = this.props;
-		net.get(api.stopMove(id, this._dir), (result) => {
+		net.get(api.stopMove(machine_id, this._dir), (result) => {
 			utils.toast(result);
 		}, err => {
 			utils.toast(err);
+		});
+	}
+
+	switchLiveUrl() {
+		const { liveurl_1, liveurl_2 } = this.props;
+		this.setState({
+			curLiveUrl: this.status.curLiveUrl === liveurl_1 ? liveurl_2 : liveurl_1
 		});
 	}
 

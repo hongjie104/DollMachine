@@ -68,6 +68,7 @@ export function get (url, successCallback, errorCallback = null) {
 		errorCallback && errorCallback('net is not Connected');
 		return;
 	}
+	utils.toast(`给机器的消息 => ${url}`);
 	timeout(fetch(url, {
 		headers: {
 			'Accept': 'application/x-www-form-urlencoded',

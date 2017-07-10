@@ -18,7 +18,7 @@ export default class Socket {
 		});
 
 		this._socket.addEventListener('message', (event) => {
-			utils.toast(event.data);
+			utils.toast(`收到消息 => ${event.data}`);
 			const data = JSON.parse(event.data);
 			if (data.type === 'login') {
 				const { onLogin } = cbObj;
@@ -41,6 +41,7 @@ export default class Socket {
 	}
 
 	send(data) {
+		utils.toast(`发送消息 => ${JSON.stringify(data)}`);
 		this._socket.send(JSON.stringify(data));
 	}
 

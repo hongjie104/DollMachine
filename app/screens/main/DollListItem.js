@@ -78,13 +78,6 @@ export default class DollListItem extends PureComponent {
 										if (result.code === 200) {
 											global.nav.push({
 												Component: PlayScreen,
-												source: {
-													uri: 'rtmp://9993.liveplay.myqcloud.com/live/9993_0baa94a95cbb11e791eae435c87f075e',
-													controller: false, //Android only
-													timeout: 3000, //Android only
-													hardCodec: false, //Android only  //1 or 0  // 1 -> hw codec enable, 0 -> disable [recommended]
-													live: true, //Android only  //1 or 0 // 1 -> live
-												},
 												...result.data
 											});
 										} else {
