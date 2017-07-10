@@ -7,7 +7,6 @@ this.socket = io(config.server, {
 	transports: ['websocket']
 });
 
-
 // /**
 //  * <plusmancn@gmail.com> created at 2017
 //  *
