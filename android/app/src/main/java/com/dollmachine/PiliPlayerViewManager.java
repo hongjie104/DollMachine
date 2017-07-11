@@ -78,6 +78,7 @@ public class PiliPlayerViewManager extends SimpleViewManager<PLVideoView> implem
         this.reactContext = reactContext;
         mEventEmitter = reactContext.getJSModule(RCTEventEmitter.class);
         mVideoView = new PLVideoView(reactContext);
+        mVideoView.setAlpha(0);
         // Set some listeners
         mVideoView.setOnPreparedListener(mOnPreparedListener);
         mVideoView.setOnInfoListener(mOnInfoListener);
@@ -188,6 +189,7 @@ public class PiliPlayerViewManager extends SimpleViewManager<PLVideoView> implem
 
             switch (what) {
                 case MEDIA_INFO_VIDEO_RENDERING_START:
+                    mVideoView.setAlpha(1);
                     mEventEmitter.receiveEvent(getTargetId(), Events.PLAYING.toString(), Arguments.createMap());
                     break;
                 case MEDIA_INFO_BUFFERING_START:
