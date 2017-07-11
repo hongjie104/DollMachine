@@ -18,6 +18,8 @@ export default class DollListItem extends PureComponent {
 	
 	constructor(props) {
 		super(props);
+
+		this._getMachinInfo = this.getMachinInfo.bind(this);
 	}
 
 	render() {
@@ -73,20 +75,7 @@ export default class DollListItem extends PureComponent {
 						dollData.status == 0 && (
 							<TouchableOpacity
 								activeOpacity={0.8}
-								onPress={() => {									
-									net.post(api.getDollMachineInfo(dollData.id), (result) => {
-										if (result.code === 200) {
-											global.nav.push({
-												Component: PlayScreen,
-												...result.data
-											});
-										} else {
-											utils.toast(result.message);
-										}
-									}, (err) => {
-										utils.toast(err);
-									});
-								}}
+								onPress={this._getMachinInfo}
 								style={{}}
 							>
 								<Image style={styles.btnImage} source={require('../../imgs/ui202_003.png')} />
@@ -97,7 +86,7 @@ export default class DollListItem extends PureComponent {
 						dollData.status == 1 && (
 							<TouchableOpacity
 								activeOpacity={0.8}
-								onPress={() => {utils.toast('其他玩家正在使用')}}
+								onPress={this._getMachinInfo}
 								style={{}}
 							>
 								<Image style={styles.btnImage} source={require('../../imgs/ui202_002.png')} />
@@ -113,6 +102,22 @@ export default class DollListItem extends PureComponent {
 				}
 			</View>
 		);
+	}
+
+	getMachinInfo() {
+		const { dollData } = this.props;
+		net.post(api.getDollMachineInfo(dollData.id), (result) => {
+			if (result.code === 200) {
+				global.nav.push({
+					Component: PlayScreen,
+					...result.data
+				});
+			} else {
+				utils.toast(result.message);
+			}
+		}, (err) => {
+			utils.toast(err);
+		});
 	}
 }
 

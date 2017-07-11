@@ -14,7 +14,7 @@ import * as utils from '../../utils';
 import * as net from '../../net';
 import * as api from '../../api';
 import * as me from '../../me';
-import Socket from '../../Socket';
+import Socket from '../../MySocket';
 // import * as storeSingleton from '../../storeSingleton';
 import DirBtn from './DirBtn';
 
