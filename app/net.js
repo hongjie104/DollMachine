@@ -8,6 +8,17 @@ const {
 import * as utils from './utils';
 import * as me from './me';
 
+import axios from 'axios';
+
+const _axios = axios.create({
+	// baseURL: Config.API_BASE,
+	headers: {
+		'Accept': 'application/x-www-form-urlencoded',
+		'Content-Type': 'application/json',
+		'Authorization': 'Basic QWxhZGRpbjpPcGVuU2VzYW1l'
+	},
+});
+
 const TIME_OUT = 12000;
 
 let isConnected = true;
@@ -68,22 +79,46 @@ export function get (url, successCallback, errorCallback = null) {
 		errorCallback && errorCallback('net is not Connected');
 		return;
 	}
-	utils.toast(`给机器的消息 => ${url}`);
-	timeout(fetch(url, {
-		headers: {
-			'Accept': 'application/x-www-form-urlencoded',
-			'Content-Type': 'application/json',
-			'Authorization': 'Basic QWxhZGRpbjpPcGVuU2VzYW1l'
-		},
-	}), TIME_OUT)
-		.then((response) => response.text())
-		.then((responseText) => {
-			// successCallback(JSON.parse(responseText));
-			// on success
-			let json = JSON.parse(responseText);
-			successCallback(json);
-		})
-		.catch(e => errorCallback && errorCallback(e));
+	// utils.toast(`给机器的消息 => ${url}`);	
+	// timeout(fetch(url, {
+	// 	headers: {
+	// 		'Accept': 'application/x-www-form-urlencoded',
+	// 		'Content-Type': 'application/json',
+	// 		'Authorization': 'Basic QWxhZGRpbjpPcGVuU2VzYW1l'
+	// 	},
+	// }), TIME_OUT)
+	// 	.then((response) => response.text())
+	// 	.then((responseText) => {
+	// 		// successCallback(JSON.parse(responseText));
+	// 		// on success
+	// 		let json = JSON.parse(responseText);
+	// 		successCallback(json);
+	// 	})
+	// 	.catch(e => errorCallback && errorCallback(e));
+
+	_axios.get(url).then(response => {
+		successCallback(response.data);
+		console.warn(JSON.stringify(response.data));
+	});
+
+	// fetch(url, {
+	// 	headers: {
+	// 		'Accept': 'application/x-www-form-urlencoded',
+	// 		'Content-Type': 'application/json',
+	// 		'Authorization': 'Basic QWxhZGRpbjpPcGVuU2VzYW1l'
+	// 	},
+	// }).then((response) => response.text())
+	// 	.then((responseText) => {
+	// 		// successCallback(JSON.parse(responseText));
+	// 		// on success
+	// 		let json = JSON.parse(responseText);
+	// 		successCallback(json);
+	// 		console.warn(responseText);
+	// 	})
+	// 	.catch(e => {
+	// 		console.warn(`error => ${e}`);
+	// 		errorCallback && errorCallback(e);
+	// 	});
 }
 
 function timeout(promise, ms) {
