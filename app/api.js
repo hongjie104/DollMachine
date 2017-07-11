@@ -67,8 +67,8 @@ export function stopMove(id, dir) {
 /**
  * 抓娃娃
  */
-export function fetchDoll(id) {
-	return `${machineUrl}/cmd=fetch&sessionId=${id}`;
+export function fetchDoll(id, token) {
+	return `${machineUrl}/cmd=fetch&sessionId=${id}&token=${token}`;
 }
 
 /**

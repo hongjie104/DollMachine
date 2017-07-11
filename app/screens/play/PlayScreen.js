@@ -17,6 +17,7 @@ import * as me from '../../me';
 import Socket from '../../MySocket';
 // import * as storeSingleton from '../../storeSingleton';
 import DirBtn from './DirBtn';
+import CountDown from './CountDown';
 
 export default class PlayScreen extends PureComponent {
 
@@ -44,7 +45,7 @@ export default class PlayScreen extends PureComponent {
 
 		this.state = {
 			isPlaying: false,
-			curLiveUrl: props.liveurl_1
+			curLiveUrl: 'rtmp://9993.liveplay.myqcloud.com/live/9993_0baa94a95cbb11e791eae435c87f075e'//props.liveurl_1
 		};
 
 		this._isSocketConnected = false;
@@ -59,6 +60,7 @@ export default class PlayScreen extends PureComponent {
 		this._onError = this.onError.bind(this);
 		this._onPlaying = this.onPlaying.bind(this);
 
+		this._fetchDoll = this.fetchDoll.bind(this);
 		this._onStartUp = this.onStartUp.bind(this);
 		this._onEndUp = this.onEndUp.bind(this);
 		this._onStartRight = this.onStartRight.bind(this);
@@ -68,7 +70,7 @@ export default class PlayScreen extends PureComponent {
 		this._onStartLeft = this.onStartLeft.bind(this);
 		this._onEndLeft = this.onEndLeft.bind(this);
 
-		this._switchLiveUrl = this.switchLiveUrl.bind(this);
+		this._switchLiveUrl = this.switchLiveUrl.bind(this);		
 	}
 
 	componentDidMount() {
@@ -100,9 +102,15 @@ export default class PlayScreen extends PureComponent {
 			onPlay: (data) => {
 				// {"type":"play","status":0}
 				this._isMachineBusy = data.status === 0;
-				this.setState({
-					isPlaying: true
-				});
+				// 给机器发个投币的消息
+				const { machine_id } = this.props;
+				net.get(api.money(machine_id), result => {
+					this.setState({
+						isPlaying: true
+					});
+				}, err => {
+					utils.toast(`投币失败 => ${err}`)
+				});				
 			},
 			onOver: () => {
 				// 我的游戏结束了
@@ -256,11 +264,12 @@ export default class PlayScreen extends PureComponent {
 		return(
 			<Image style={{width: utils.screenWidth(), height: utils.toDips(620)}} source={require('../../imgs/ui101_3.png')}>
 				<Image style={{position: 'absolute', left: utils.toDips(69), top: utils.toDips(112), width: utils.toDips(114), height: utils.toDips(32)}} source={require('../../imgs/ui303_6.png')} />
+				<CountDown style={{position: 'absolute', left: utils.toDips(230), top: utils.toDips(55)}} onEnd={() => {
+					utils.toast('onEnd');
+				}} />
 				<TouchableOpacity
 					activeOpacity={0.8}
-					onPress={() => {
-
-					}}
+					onPress={this._fetchDoll}
 					style={{position: 'absolute', left: utils.toDips(59), top: utils.toDips(166), }}
 				>
 					<Image style={{width: utils.toDips(228), height: utils.toDips(98)}} source={require('../../imgs/ui303_7.png')} />
@@ -278,8 +287,10 @@ export default class PlayScreen extends PureComponent {
 		if (this._isSocketConnected) {
 			if (!this._isMachineBusy) {
 				const { id, machine_id } = this.props;
+				// 发消息去抢机器
 				net.post(api.tryToPlay(id), (result) => {
 					if (result.code === 200) {
+						// socket通知php
 						this._socket.send({
 							type: 'play',
 							machine_id: id
@@ -320,6 +331,15 @@ export default class PlayScreen extends PureComponent {
 
 	onPlaying(e) {
 		console.warn('onPlaying', e);
+	}
+
+	fetchDoll() {
+		const { machine_id } = this.props;
+		net.get(api.fetchDoll(machine_id, me.info.token), (result) => {
+			utils.toast(result);
+		}, err => {
+			utils.toast(err);
+		});
 	}
 
 	onStartUp() {
