@@ -20,10 +20,12 @@ export default class MySwiper extends PureComponent {
 	render() {
 		return (
 			<View style={styles.container}>
-				<Swiper style={styles.wrapper} showsButtons={false} autoplay={true} height={utils.toDips(200)} paginationStyle={{bottom: 10}}>
-					<Image style={styles.img} source={require('../../imgs/ui001_001.jpg')} />
-					<Image style={styles.img} source={require('../../imgs/ui001_003.jpg')} />
-				</Swiper>
+				{
+					<Swiper style={styles.wrapper} showsButtons={false} autoplay={true} height={utils.toDips(200)} paginationStyle={{bottom: 10}}>
+						<Image style={styles.img} source={require('../../imgs/ui001_001.jpg')} />
+						<Image style={styles.img} source={require('../../imgs/ui001_003.jpg')} />
+					</Swiper>
+				}
 			</View>
 		);
 	}
