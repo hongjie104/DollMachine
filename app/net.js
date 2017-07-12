@@ -132,3 +132,25 @@ function timeout(promise, ms) {
 			.catch(reject);
 	});
 }
+
+export function postToMachine({ url, data }, successCallback, errorCallback = null) {
+	if (!isConnected) {
+		// utils.toast('网络链接已断开');
+		errorCallback && errorCallback('net is not Connected');
+		return;
+	}
+	fetch(url, {
+		method: 'POST',
+		headers: {
+			'Accept': 'application/x-www-form-urlencoded',
+			'Content-Type': 'text/plain', //'application/json',
+			'Authorization': 'Basic QWxhZGRpbjpPcGVuU2VzYW1l'
+		},
+		body: JSON.stringify(data)
+	})
+		.then((response) => response.text())
+		.then((responseText) => {
+			successCallback(JSON.parse(responseText));
+		})
+		.catch(e => errorCallback && errorCallback(e));
+}

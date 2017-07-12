@@ -105,12 +105,14 @@ export default class PlayScreen extends PureComponent {
 				// 给机器发个投币的消息
 				const { machine_id } = this.props;
 				net.get(api.money(machine_id), result => {
+				// net.postToMachine(api.money(machine_id), result => {
 					utils.toast(`投币返回 => ${JSON.stringify(result)}`);
 					this.setState({
 						isPlaying: true
 					});
 				}, err => {
 					utils.toast(`投币失败 => ${err}`)
+					console.warn(`投币失败 => ${err}`);
 				});				
 			},
 			onOver: () => {
@@ -337,6 +339,7 @@ export default class PlayScreen extends PureComponent {
 	fetchDoll() {
 		const { machine_id } = this.props;
 		net.get(api.fetchDoll(machine_id, me.info.token), (result) => {
+		// net.postToMachine(api.fetchDoll(machine_id, me.info.token), (result) => {
 			utils.toast(result);
 		}, err => {
 			utils.toast(err);
@@ -379,7 +382,8 @@ export default class PlayScreen extends PureComponent {
 		const { machine_id } = this.props;
 		this._dir = dir;
 		net.get(api.startMove(machine_id, dir), (result) => {			
-			// utils.toast(result);
+		// net.postToMachine(api.startMove(machine_id, dir), (result) => {			
+			utils.toast(result);
 		}, err => {
 			utils.toast(err);
 		});
@@ -388,7 +392,8 @@ export default class PlayScreen extends PureComponent {
 	pauseMove() {
 		const { machine_id } = this.props;
 		net.get(api.stopMove(machine_id, this._dir), (result) => {
-			// utils.toast(result);
+		// net.postToMachine(api.stopMove(machine_id, this._dir), (result) => {
+			utils.toast(result);
 		}, err => {
 			utils.toast('aaa');
 			utils.toast('err => ${err}');

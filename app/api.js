@@ -77,3 +77,58 @@ export function fetchDoll(id, token) {
 export function money(id) {
 	return `${machineUrl}/cmd=money&sessionId=${id}`;
 }
+
+// /**
+//  * 开始动作 
+//  */
+// export function startMove(id, dir) {
+// 	return {
+// 		url: `${machineUrl}`,
+// 		data: {
+// 			cmd: dir,
+// 			sessionId: id
+// 		}
+// 	};
+// }
+
+// /**
+//  * 停止动作
+//  */
+// export function stopMove(id, dir) {
+// 	return {
+// 		url: `${machineUrl}`,
+// 		data: {
+// 			cmd: 'pause',
+// 			sessionId: id,
+// 			pvsCmd: dir
+// 		}
+// 	};
+// }
+
+// /**
+//  * 抓娃娃
+//  */
+// export function fetchDoll(id, token) {
+// 	return {
+// 		url: `${machineUrl}`,
+// 		data: {
+// 			cmd: 'fetch',
+// 			sessionId: id,
+// 			token
+// 		}
+// 	};
+// }
+
+// /**
+//  * 给机器投币
+//  */
+// export function money(id) {
+// 	// return `${machineUrl}/cmd=money&sessionId=${id}`;
+// 	return {
+// 		url: `${machineUrl}`,
+// 		data: {
+// 			cmd: 'money',
+// 			sessionId: id
+// 		}
+// 	};
+// }
