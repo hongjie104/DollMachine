@@ -30,7 +30,7 @@ export default class Socket {
 			} else if (data.type === 'play') {
 				const { onPlay } = cbObj;
 				onPlay && onPlay(data);
-			} else if(data.type === 'over') {
+			} else if(data.type === 'gameover') {
 				const { onOver } = cbObj;
 				onOver && onOver(data);
 			} else if(data.type === 'start') {

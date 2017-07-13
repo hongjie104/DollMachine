@@ -115,11 +115,17 @@ export default class PlayScreen extends PureComponent {
 					console.warn(`投币失败 => ${err}`);
 				});				
 			},
-			onOver: () => {
+			onOver: (data) => {
 				// 我的游戏结束了
 				this.setState({
 					isPlaying: false
 				});
+				const { status } = data;
+				if (status === 0) {
+					utils.toast('抓取失败');
+				} else {
+					utils.toast('抓取成功');
+				}
 			},
 			onStart: () => {
 				// 可以抢机器了
