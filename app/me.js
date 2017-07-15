@@ -12,16 +12,20 @@
 
 import * as storage from './storage';
 
-export let info = {
-	uid: '',
-	token: '',
-	headimg: '',
-	username: '',
-	gender: '',
-	birthday: '',
-	nickname: '',
-	credit: ''
-};
+function _initInfo() {
+	return {
+		uid: '',
+		token: '',
+		headimg: '',
+		username: '',
+		gender: '',
+		birthday: '',
+		nickname: '',
+		credit: ''
+	};
+}
+
+export let info = _initInfo();
 
 export function save(data) {
 	storage.saveDataToLocal('myInfo', data, () => {});
@@ -29,4 +33,9 @@ export function save(data) {
 
 export function load(cb, errCB) {
 	storage.loadDataFromLocal('myInfo', cb, errCB);
+}
+
+export function clear() {
+	storage.removeLocalData('myInfo');
+	info = _initInfo();
 }

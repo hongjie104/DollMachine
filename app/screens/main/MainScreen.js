@@ -19,7 +19,8 @@ import * as me from '../../me';
 import MySwiper from './MySwiper';
 import DollListRow from './DollListRow';
 
-import RegisterScreen from '../register/RegisterScreen';
+// import RegisterScreen from '../register/RegisterScreen';
+// import LoginScreen from '../login/LoginScreen';
 
 /**
  * 娃娃机列表界面
@@ -146,17 +147,11 @@ export default class MainScreen extends PureComponent {
 						<TouchableOpacity
 							activeOpacity={0.8}
 							onPress={() => {
-								net.post(api.login('test001', '123456'), (result) => {
-									if (result.code === 200) {
-										me.info = result.data;
-										me.save(result.data);
-										utils.toast(result.data);
-									} else {
-										utils.toast(result.message);
-									}
-								}, (err) => {
-									utils.toast(err);
-								});
+								me.clear();
+								utils.toast('退出账号');
+								// global.nav.push({
+								// 	Component: LoginScreen
+								// });
 							}}
 							style={{marginTop: utils.toDips(21), marginLeft: utils.toDips(421)}}
 						>
@@ -176,9 +171,9 @@ export default class MainScreen extends PureComponent {
 						<TouchableOpacity
 							activeOpacity={0.8}
 							onPress={() => {
-								global.nav.push({
-									Component: RegisterScreen
-								});								
+								// global.nav.push({
+								// 	Component: RegisterScreen
+								// });
 							}}
 							style={{marginTop: utils.toDips(21), marginLeft: utils.toDips(1)}}
 						>
