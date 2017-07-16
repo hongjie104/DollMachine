@@ -400,10 +400,9 @@ export default class PlayScreen extends PureComponent {
 		net.get(api.stopMove(machine_id, this._dir), (result) => {
 		// net.postToMachine(api.stopMove(machine_id, this._dir), (result) => {
 			utils.toast(result);
-		}, err => {
-			utils.toast('aaa');
+		}, err => {			
 			utils.toast('err => ${err}');
-		});
+		})
 	}
 
 	switchLiveUrl() {
