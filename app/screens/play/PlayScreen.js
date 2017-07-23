@@ -214,7 +214,7 @@ export default class PlayScreen extends PureComponent {
 				}
 				<TouchableOpacity
 					activeOpacity={0.8}
-					onPress={this._switchLiveUrl}
+					onPress={() => {}}
 					style={{position: 'absolute', left: utils.toDips(8), bottom: utils.toDips(620)}}
 				>
 					<Image style={{width: utils.toDips(90), height: utils.toDips(90)}} source={require('../../imgs/ui301_4.png')} />
