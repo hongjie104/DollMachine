@@ -45,7 +45,8 @@ export default class PlayScreen extends PureComponent {
 
 		this.state = {
 			isPlaying: false,
-			curLiveUrl: 'rtmp://9993.liveplay.myqcloud.com/live/9993_0baa94a95cbb11e791eae435c87f075e'//props.liveurl_1
+			// curLiveUrl: 'rtmp://9993.liveplay.myqcloud.com/live/9993_0baa94a95cbb11e791eae435c87f075e'//props.liveurl_1
+			curLiveUrl: props.liveurl_1
 		};
 
 		this._isSocketConnected = false;
@@ -408,7 +409,7 @@ export default class PlayScreen extends PureComponent {
 	switchLiveUrl() {
 		const { liveurl_1, liveurl_2 } = this.props;
 		this.setState({
-			curLiveUrl: this.status.curLiveUrl === liveurl_1 ? liveurl_2 : liveurl_1
+			curLiveUrl: this.state.curLiveUrl === liveurl_1 ? liveurl_2 : liveurl_1
 		});
 	}
 
