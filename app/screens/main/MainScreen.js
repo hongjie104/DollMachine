@@ -136,7 +136,7 @@ export default class MainScreen extends PureComponent {
 						}
 						<TouchableOpacity
 							activeOpacity={0.8}
-							onPress={() => {utils.toast('刷新')}}
+							onPress={this._onListEndReached}
 							style={{marginTop: utils.toDips(21), marginLeft: utils.toDips(14)}}
 						>
 							<Image style={{width: utils.toDips(100), height: utils.toDips(100)}} source={require('../../imgs/ui207_104.png')} />
