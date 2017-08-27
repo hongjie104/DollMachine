@@ -21,6 +21,7 @@ import DollListRow from './DollListRow';
 
 // import RegisterScreen from '../register/RegisterScreen';
 // import LoginScreen from '../login/LoginScreen';
+import OrderListScene from '../order/OrderListScene';
 
 /**
  * 娃娃机列表界面
@@ -171,9 +172,9 @@ export default class MainScreen extends PureComponent {
 						<TouchableOpacity
 							activeOpacity={0.8}
 							onPress={() => {
-								// global.nav.push({
-								// 	Component: RegisterScreen
-								// });
+								global.nav.push({
+									Component: OrderListScene
+								});
 							}}
 							style={{marginTop: utils.toDips(21), marginLeft: utils.toDips(1)}}
 						>
