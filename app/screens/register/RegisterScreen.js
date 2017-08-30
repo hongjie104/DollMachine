@@ -14,6 +14,7 @@ import * as utils from '../../utils';
 import * as net from '../../net';
 import * as api from '../../api';
 import * as me from '../../me';
+import MainScreen from '../main/MainScreen';
 
 export default class RegisterScreen extends PureComponent {
 	
@@ -223,6 +224,9 @@ export default class RegisterScreen extends PureComponent {
 				utils.toast(result.data);
 				me.info = result.data;
 				me.save(result.data);
+				global.nav.resetTo({
+					Component: MainScreen
+				});
 			} else {
 				utils.toast(result.message);
 			}
