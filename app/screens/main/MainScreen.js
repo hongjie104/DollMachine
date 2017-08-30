@@ -19,8 +19,6 @@ import * as me from '../../me';
 import MySwiper from './MySwiper';
 import DollListRow from './DollListRow';
 
-// import RegisterScreen from '../register/RegisterScreen';
-// import LoginScreen from '../login/LoginScreen';
 import OrderListScene from '../order/OrderListScene';
 
 /**

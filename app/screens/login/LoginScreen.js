@@ -15,6 +15,7 @@ import * as me from '../../me';
 import * as api from '../../api';
 import * as net from '../../net';
 import MainScreen from '../main/MainScreen';
+import RegisterScreen from '../register/RegisterScreen';
 
 export default class LoginScreen extends PureComponent {
 	
@@ -91,7 +92,11 @@ export default class LoginScreen extends PureComponent {
 					}
 					<TouchableOpacity
 						activeOpacity={0.8}
-						onPress={() => {}}
+						onPress={() => {
+							global.nav.push({
+								Component: RegisterScreen
+							});
+						}}
 						style={styles.registerBtn}
 					>
 						<Image style={styles.btnImg} source={require('../../imgs/denglu007.png')} />
